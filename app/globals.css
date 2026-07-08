@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Estilos base: inputs, tablas y clases reutilizables
+   ============================================================ */
+
+@layer base {
+  :root {
+    --font-display: 'Marcellus', 'Georgia', serif;
+    --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  }
+  body {
+    @apply bg-arena font-body text-sm text-tinta;
+  }
+  input, select {
+    @apply w-full rounded-lg border border-[#D5CDB6] bg-[#FDFCF8] px-2.5 py-2 text-sm text-tinta;
+  }
+  input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+    @apply outline outline-2 outline-offset-1 outline-laton;
+  }
+  th {
+    @apply whitespace-nowrap border-b-2 border-linea px-2.5 py-2 text-left text-[11px] uppercase tracking-wider text-[#77826F];
+  }
+  td {
+    @apply border-b border-[#EFEADB] px-2.5 py-2 align-middle;
+  }
+  tr:last-child td { @apply border-b-0; }
+}
+
+@layer components {
+  .tarjeta {
+    @apply mb-4 rounded-xl border border-linea bg-white p-5;
+  }
+  .titulo-tarjeta {
+    @apply mb-3 flex items-center gap-2 font-display text-[17px] text-verde-oscuro;
+  }
+  .cabecera-miga {
+    @apply mb-1 text-[11.5px] font-semibold uppercase tracking-[1.4px] text-laton-oscuro;
+  }
+  .cabecera-titulo {
+    @apply font-display text-[27px] text-verde-oscuro;
+  }
+  .btn-primario {
+    @apply rounded-lg bg-verde px-5 py-2.5 text-sm font-semibold text-laton-palido transition-colors hover:bg-verde-oscuro;
+  }
+  .btn-secundario {
+    @apply inline-flex cursor-pointer items-center rounded-lg border-2 border-verde bg-white px-4 py-2 text-sm font-semibold text-verde-oscuro hover:bg-verde-suave;
+  }
+  .btn-peligro {
+    @apply rounded-lg border-2 border-barro bg-white px-4 py-2 text-sm font-semibold text-barro hover:bg-[#FBF0ED];
+  }
+  .btn-borrar {
+    @apply rounded-md px-1.5 py-1 text-[13px] text-[#B9B2A0] hover:bg-[#FBF0ED] hover:text-barro;
+  }
+  .chip {
+    @apply inline-block rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold;
+  }
+  .chip-verde  { @apply bg-verde-suave text-verde; }
+  .chip-rojo   { @apply bg-[#F7E3DE] text-barro; }
+  .chip-naranja{ @apply bg-[#F9EFD8] text-[#8F6A12]; }
+  .chip-gris   { @apply bg-[#EDEBE3] text-[#6E7A72]; }
+  .chip-brass  { @apply bg-laton-palido text-laton-oscuro; }
+  .etiqueta-campo {
+    @apply text-[11.5px] font-semibold tracking-wide text-[#55645C];
+  }
+  .nota {
+    @apply mb-3 mt-1 text-[12.5px] text-[#6E7A72];
+  }
+  .vacio {
+    @apply py-1.5 text-[13px] italic text-[#8A948C];
+  }
+  .kpi {
+    @apply rounded-[10px] border border-linea bg-white px-3.5 py-3;
+  }
+  .banda-brass {
+    @apply border-t-[3px] border-t-laton bg-gradient-to-b from-laton-palido via-white to-white;
+  }
+}
+
+/* Impresión: solo se imprime el contenido (para el informe) */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+  main { padding: 0 !important; max-width: none !important; }
+  .tarjeta { border: none; }
+}
