@@ -209,25 +209,25 @@ create trigger documentos_updated_at
 
 -- Almacén de archivos: bucket "documentos" (máximo 10 MB por archivo)
 insert into storage.buckets (id, name, public, file_size_limit)
-values ('documentos', 'documentos', true, 10485760)
-on conflict (id) do update set public = true, file_size_limit = 10485760;
+values ('documentos', 'documentos', false, 10485760)
+on conflict (id) do update set public = false, file_size_limit = 10485760;
 
 drop policy if exists "documentos_lectura" on storage.objects;
 drop policy if exists "documentos_subida"  on storage.objects;
 drop policy if exists "documentos_borrado" on storage.objects;
 create policy "documentos_lectura" on storage.objects
-  for select using (bucket_id = 'documentos');
+  for select to authenticated using (bucket_id = 'documentos');
 create policy "documentos_subida" on storage.objects
-  for insert with check (bucket_id = 'documentos');
+  for insert to authenticated with check (bucket_id = 'documentos');
 create policy "documentos_borrado" on storage.objects
-  for delete using (bucket_id = 'documentos');
+  for delete to authenticated using (bucket_id = 'documentos');
 
 -- ============================================================================
 -- SEGURIDAD (RLS)
--- La app usa la clave pública (anon). De momento se permite todo a anon
--- porque la aplicación no tiene login. IMPORTANTE: cuando se añada
--- autenticación (Auth.js o Supabase Auth), sustituir estas políticas por
--- otras que exijan usuario autenticado: using (auth.role() = 'authenticated').
+-- La aplicación tiene login con Supabase Auth: solo los usuarios con sesión
+-- iniciada pueden leer o escribir. Recuerda crear los usuarios en
+-- Authentication → Users → Add user, y desactivar el registro público en
+-- Authentication → Sign In / Up → "Allow new users to sign up".
 -- ============================================================================
 alter table public.config      enable row level security;
 alter table public.socios      enable row level security;
@@ -245,13 +245,13 @@ drop policy if exists "acceso_total_limpieza"    on public.limpieza;
 drop policy if exists "acceso_total_tareas"      on public.tareas;
 drop policy if exists "acceso_total_documentos" on public.documentos;
 
-create policy "acceso_total_config"      on public.config      for all using (true) with check (true);
-create policy "acceso_total_socios"      on public.socios      for all using (true) with check (true);
-create policy "acceso_total_movimientos" on public.movimientos for all using (true) with check (true);
-create policy "acceso_total_inventario"  on public.inventario  for all using (true) with check (true);
-create policy "acceso_total_limpieza"    on public.limpieza    for all using (true) with check (true);
-create policy "acceso_total_tareas"      on public.tareas      for all using (true) with check (true);
-create policy "acceso_total_documentos" on public.documentos for all using (true) with check (true);
+create policy "acceso_total_config"      on public.config      for all to authenticated using (true) with check (true);
+create policy "acceso_total_socios"      on public.socios      for all to authenticated using (true) with check (true);
+create policy "acceso_total_movimientos" on public.movimientos for all to authenticated using (true) with check (true);
+create policy "acceso_total_inventario"  on public.inventario  for all to authenticated using (true) with check (true);
+create policy "acceso_total_limpieza"    on public.limpieza    for all to authenticated using (true) with check (true);
+create policy "acceso_total_tareas"      on public.tareas      for all to authenticated using (true) with check (true);
+create policy "acceso_total_documentos" on public.documentos for all to authenticated using (true) with check (true);
 
 -- ============================================================================
 -- DATOS INICIALES (necesarios): la fila única de configuración

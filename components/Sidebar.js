@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Khatam from "@/components/Khatam";
 import { useDatos } from "@/lib/datos";
+import { useAuth } from "@/lib/auth";
 import { DEFAULT_DATA } from "@/lib/util";
 
 const SECCIONES = [
@@ -43,6 +44,7 @@ export default function Sidebar() {
   const ruta = usePathname();
   const [abierto, setAbierto] = useState(false);
   const { datos } = useDatos();
+  const { sesion, cerrarSesion } = useAuth();
   const nombre = datos?.config?.nombre || DEFAULT_DATA.config.nombre;
   const anio = datos?.config?.anio || new Date().getFullYear();
 
@@ -89,8 +91,20 @@ export default function Sidebar() {
             </Link>
           ))}
         </nav>
-        <div className="mt-auto px-4 py-3.5 text-[10.5px] leading-relaxed text-[#EDE7D4]/50">
-          Los datos se guardan solos en este navegador. Haz copias desde Ajustes.
+        {/* Usuario conectado y cierre de sesión */}
+        <div className="mt-auto border-t border-white/10 px-4 pb-4 pt-3">
+          <p className="mb-2 truncate text-[11px] text-[#EDE7D4]/70" title={sesion?.user?.email}>
+            👤 {sesion?.user?.email || "—"}
+          </p>
+          <button
+            onClick={cerrarSesion}
+            className="w-full rounded-lg border border-[#E2C88A]/40 px-3 py-1.5 text-[12px] font-semibold text-[#F2E7C8] transition-colors hover:bg-white/10"
+          >
+            Cerrar sesión
+          </button>
+          <p className="mt-3 text-[10px] leading-relaxed text-[#EDE7D4]/45">
+            Los datos se guardan en la nube de la asociación.
+          </p>
         </div>
       </aside>
     </>

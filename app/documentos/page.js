@@ -11,7 +11,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useDatos } from "@/lib/datos";
-import { urlDocumento } from "@/lib/supabase";
+import { firmarUrlDocumento } from "@/lib/supabase";
 import { fFecha, hoyISO, fmtTamano, CATEGORIAS_DOC } from "@/lib/util";
 import Cabecera from "@/components/Cabecera";
 import Tarjeta from "@/components/Tarjeta";
@@ -90,6 +90,17 @@ function Contenido() {
     if (!window.confirm(`¿Borrar "${doc.titulo}"?\nEl archivo se eliminará definitivamente del almacén.`)) return;
     const ok = await api.borrarDocumento(doc);
     if (ok) avisar("Documento borrado.");
+  };
+
+  // Abre el documento con un enlace firmado temporal (bucket privado)
+  const ver = async (doc) => {
+    try {
+      const url = await firmarUrlDocumento(doc.ruta);
+      window.open(url, "_blank", "noopener");
+    } catch (e) {
+      console.error(e);
+      avisar("No se pudo abrir el documento.");
+    }
   };
 
   // ---- Contadores por categoría (solo las que tienen documentos) ----
@@ -214,14 +225,12 @@ function Contenido() {
                     <td>{fFecha(d.fecha)}</td>
                     <td className="text-right tabular-nums">{fmtTamano(d.tamano)}</td>
                     <td className="whitespace-nowrap text-right">
-                      <a
+                      <button
                         className="btn-secundario !px-2.5 !py-1 !text-[12px]"
-                        href={urlDocumento(d.ruta)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={() => ver(d)}
                       >
                         Ver
-                      </a>
+                      </button>
                       <button
                         className="btn-secundario !ml-1.5 !px-2.5 !py-1 !text-[12px]"
                         onClick={() => setEditando(d)}

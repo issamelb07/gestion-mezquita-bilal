@@ -3,6 +3,8 @@
 // ============================================================
 
 import "./globals.css";
+import { AuthProvider } from "@/lib/auth";
+import Guardian from "@/components/Guardian";
 import { DatosProvider } from "@/lib/datos";
 import Sidebar from "@/components/Sidebar";
 
@@ -25,14 +27,20 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <DatosProvider>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <main className="mx-auto w-full max-w-[1060px] flex-1 px-4 pb-16 pt-6 md:px-8">
-              {children}
-            </main>
-          </div>
-        </DatosProvider>
+        {/* Sin sesión, el Guardián muestra el login y nada más se monta:
+            ni la barra lateral, ni las páginas, ni la carga de datos. */}
+        <AuthProvider>
+          <Guardian>
+            <DatosProvider>
+              <div className="flex min-h-screen">
+                <Sidebar />
+                <main className="mx-auto w-full max-w-[1060px] flex-1 px-4 pb-16 pt-6 md:px-8">
+                  {children}
+                </main>
+              </div>
+            </DatosProvider>
+          </Guardian>
+        </AuthProvider>
       </body>
     </html>
   );
